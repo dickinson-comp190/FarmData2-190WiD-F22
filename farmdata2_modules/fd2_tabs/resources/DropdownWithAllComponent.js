@@ -13,18 +13,17 @@
  * 
  * @vue-prop {Array} dropDownList - The contents of the dropdown. Changes to an array bound to this prop will appear in the list.
  * @vue-prop {Boolean} [includesAll=false] - true to include the All option at the top of the list of options. All will be omitted if includesAll is false or omitted.
- * @vue-prop {String} [selectedVal] - the option to be selected in the component. Changes to a value bound to this prop will change the selected option.
- * @vue-prop {Boolean} [disabled=false] - true to disable the dropdown, false otherwise.
- * 
+ * @vue-prop {String} [defaultInput] - the option to be selected in the component. Changes to a value bound to this prop will change the selected option.
+ *
  * @vue-event {String} selection-changed - Emits the selected option when the option is changed. Note: This event is also emitted in the mounted lifecycle hook to signal the setting of the initial value.
  */ 
 let DropdownWithAllComponent = {
-    template: `<span data-cy="dropdown-component">
+    template: `<div data-cy="dropdown-component">
             <label for="dropdownOptions"><slot> </slot></label>
-            <select id="dropdownOptions" v-model="selectedOption" data-cy="dropdown-input" @change="selectionChanged" :disabled="isDisabled">
+            <select id="dropdownOptions" v-model="selectedOption" data-cy="dropdown-input" @change="selectionChanged">
                 <option v-for="(singleOption,i) in fullDropdown" :data-cy="'option'+i">{{ singleOption }}</option>
             </select>
-        </span>`, 
+        </div>`, 
     props: {
         dropdownList: {
             type: Array,
@@ -33,32 +32,21 @@ let DropdownWithAllComponent = {
         includesAll: {
             type: Boolean,
         },
-        selectedVal: {
+        defaultInput: {
             type: String
-        },
-        disabled: {
-            type: Boolean,
-            default: false
         } 
     }, 
     data() {
-        return { 
-            selectedOption: this.selectedVal,
-            isDisabled: this.disabled
-        }
+        return { selectedOption: this.defaultInput }
     },
     watch: {
-        selectedVal(newVal) {
+        defaultInput(newVal) {
             if(this.fullDropdown.includes(newVal)) {
                 this.selectedOption = newVal;
             }
             else {
                 this.selectedOption = null;
             }
-            this.selectionChanged()
-        },
-        disabled(newBool) {
-            this.isDisabled = newBool;
         }
     },
     mounted() {

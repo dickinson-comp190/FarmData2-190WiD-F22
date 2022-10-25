@@ -1,5 +1,4 @@
 docker/db/*
-docker/._db
 docker/logo/tmp/**
 docker/logo/.htaccess
 
@@ -17,7 +16,4 @@ farmdata2_modules/**/cypress/videos/*
 
 **/__pycache__
 
-**/node_modules
-
 .DS_Store
-.idea

@@ -7,9 +7,6 @@ var createRecord = FarmOSAPI.createRecord
 var deleteRecord = FarmOSAPI.deleteRecord
 var getRecord = FarmOSAPI.getRecord
 
-var getConfiguration = FarmOSAPI.getConfiguration
-var setConfiguration = FarmOSAPI.setConfiguration
-
 var getIDToUserMap = FarmOSAPI.getIDToUserMap
 var getIDToCropMap = FarmOSAPI.getIDToCropMap
 var getIDToAreaMap = FarmOSAPI.getIDToAreaMap
@@ -158,7 +155,7 @@ describe('API Request Functions', () => {
             cy.get('@nameMap').should(function(nameToIdMap) {
                 expect(nameToIdMap).to.not.be.null
                 expect(nameToIdMap).to.be.a('Map')
-                expect(nameToIdMap.size).to.equal(10)
+                expect(nameToIdMap.size).to.equal(11)
 
                 manager1ID = nameToIdMap.get('manager1')
                 adminID = nameToIdMap.get('admin')
@@ -171,7 +168,7 @@ describe('API Request Functions', () => {
                 cy.get('@idMap').should(function(idToNameMap) {
                     expect(idToNameMap).to.not.be.null
                     expect(idToNameMap).to.be.a('Map')
-                    expect(idToNameMap.size).to.equal(10)
+                    expect(idToNameMap.size).to.equal(11)
 
                     expect(idToNameMap.get(manager1ID)).to.equal('manager1')
                     expect(idToNameMap.get(adminID)).to.equal('admin')
@@ -858,69 +855,4 @@ describe('API Request Functions', () => {
                 expect(quantityLocation(quantity, 'Yeehaw')).to.equal(-1)
             })
         })
-    
-    context('test configuration functions', () => {
-        
-        it('gets an existing configuration log', () => {
-            cy.wrap(getConfiguration()).as('done')
-
-            cy.get('@done').should((response) => {
-                expect(response.status).to.equal(200)
-                expect(response.data.id).to.equal('1')
-                expect(response.data.labor).to.equal('Required')
-            })
-        })
-
-        it('sets labor to optional, then back to Required', () => {           
-            cy.wrap(getSessionToken())
-            // First request for the session token.
-            .then((sessionToken) => {
-                token = sessionToken     
-            })
-            // Then update the log using the token
-            .then(() => {
-                updateData =
-                    {
-                        "id" : "1",
-                        "labor":"Optional"
-                    } 
-                cy.wrap(setConfiguration(updateData , token)).as('update')
-            })
-            cy.get('@update').should((response) => {
-            expect(response.status).to.equal(200)
-            })
-            // If the update was successful, change the labor data to optional.
-            .then(() => {
-                cy.wrap(getConfiguration()).as('changed')
-            })
-            cy.get('@changed').should((response) => {
-                expect(response.status).to.equal(200)
-                expect(response.data.id).to.equal('1')
-                expect(response.data.labor).to.equal('Optional')
-            })
-            // If the change was successful, change it back to required
-            .then(() => {
-                
-                resetData =
-                    {
-                        "id" : "1",
-                        "labor":"Required"
-                    } 
-                        
-                cy.wrap(setConfiguration(resetData, token)).as('default')
-            })
-            cy.get('@default').should((response) => {
-                expect(response.status).to.equal(200)
-            })
-            .then(() => {
-                cy.wrap(getConfiguration()).as('reset')
-            })
-            cy.get('@reset').should((response) => {
-                expect(response.status).to.equal(200)
-                expect(response.data.id).to.equal('1')
-                expect(response.data.labor).to.equal('Required')
-            })
-        })
-        
     })
-})

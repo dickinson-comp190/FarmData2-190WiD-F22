@@ -42,12 +42,12 @@ describe('Field and Crop Dropdowns', () => {
         })
     })
 
-    context('selectedVal property sets initial value', () => {
+    context('defaultInput property sets initial value', () => {
         it('loads with specified default input in the search bar', () => {
             mount(DropdownWithAllComponent, {
                 propsData: {
                     dropdownList: ['Corn', 'Beans', 'Peas'],
-                    selectedVal: "Beans"
+                    defaultInput: "Beans"
                 },
             })
 
@@ -61,7 +61,7 @@ describe('Field and Crop Dropdowns', () => {
             mount(DropdownWithAllComponent, {
                 propsData: {
                     dropdownList: ['Corn', 'Beans', 'Peas'],
-                    selectedVal: "Beans"
+                    defaultInput: "Beans"
                 },
                 listeners: {
                     'selection-changed': spy
@@ -78,7 +78,7 @@ describe('Field and Crop Dropdowns', () => {
                 propsData: {
                     dropdownList: ['Corn', 'Beans', 'Peas'],
                     includesAll: true,
-                    selectedVal: "All"
+                    defaultInput: "All"
                 },
             })
 
@@ -91,7 +91,7 @@ describe('Field and Crop Dropdowns', () => {
                 propsData: {
                     dropdownList: ['Corn', 'Beans', 'Peas'],
                     includesAll: true,
-                    selectedVal: "Nope"
+                    defaultInput: "Nope"
                 },
             })
 
@@ -108,7 +108,7 @@ describe('Field and Crop Dropdowns', () => {
                     propsData: {
                         dropdownList: ['Corn', 'Beans', 'Peas'],
                         includesAll: true,
-                        selectedVal: "Beans"
+                        defaultInput: "Beans"
                     }
             })
         })
@@ -142,175 +142,37 @@ describe('Field and Crop Dropdowns', () => {
                 propsData: {
                     dropdownList: ['Corn', 'Beans', 'Peas'],
                     includesAll: true,
-                    selectedVal: 'Beans',
+                    defaultInput: 'Beans',
                 },
             })
         })
 
         it ('change prop to Corn', () => {
             expect(comp.vm.selectedOption).to.equal('Beans')
-            cy.wrap(comp.setProps({ selectedVal: 'Corn' })).then(() => {
+            cy.wrap(comp.setProps({ defaultInput: 'Corn' })).then(() => {
                   expect(comp.vm.selectedOption).to.equal('Corn')
             })
         })
 
         it('change prop to All', () => {
             expect(comp.vm.selectedOption).to.equal('Beans')
-            cy.wrap(comp.setProps({ selectedVal: 'All' })).then(() => {
+            cy.wrap(comp.setProps({ defaultInput: 'All' })).then(() => {
                   expect(comp.vm.selectedOption).to.equal('All')
             })
         })
 
         it('change prop to nonlisted option', () => {
             expect(comp.vm.selectedOption).to.equal('Beans')
-            cy.wrap(comp.setProps({ selectedVal: 'Nope' })).then(() => {
+            cy.wrap(comp.setProps({ defaultInput: 'Nope' })).then(() => {
                   expect(comp.vm.selectedOption).to.equal(null)
             })
         })
 
         it('change prop to null', () => {
             expect(comp.vm.selectedOption).to.equal('Beans')
-            cy.wrap(comp.setProps({ selectedVal: null })).then(() => {
+            cy.wrap(comp.setProps({ defaultInput: null })).then(() => {
                   expect(comp.vm.selectedOption).to.equal(null)
-                })
-            })
-        })
-
-        context('testing disabled option', () => {
-            
-            it('checking if the dropdown is disabled', () => {
-                mount(DropdownWithAllComponent, {
-                    propsData: {
-                        dropdownList: ['Corn', 'Beans', 'Peas'],
-                        includesAll: true,
-                        selectedVal: "Beans",
-                        disabled: true,
-                    }
-                })
-                cy.get('[data-cy=dropdown-input]')
-                .should('be.disabled')
-            })
-
-            it('checking disabled when prop changes', () => {
-                let comp;
-                comp = shallowMount(DropdownWithAllComponent, { 
-                    propsData: {
-                        dropdownList: ['Corn', 'Beans', 'Peas'],
-                        includesAll: true,
-                        selectedVal: 'Beans',
-                        disabled: true,
-                    },
-                })
-                expect(comp.vm.isDisabled).to.equal(true)
-                cy.wrap(comp.setProps({ disabled: false })).then(() => {
-                    expect(comp.vm.isDisabled).to.equal(false)
-                })
-            })
-        })
-        
-        context('changing prop emits event', () => {
-            // Would be nice to do these tests with a mount so that
-            // we could check that the drop down actually changes
-            // to display the correct value.
-    
-            let comp;
-            beforeEach(() => {
-                // Use shallowMount here so we can use setProp in its
-                const spy = cy.spy()
-                comp = shallowMount(DropdownWithAllComponent, {
-                    propsData: {
-                        dropdownList: ['Corn', 'Beans', 'Peas'],
-                        includesAll: true,
-                        selectedVal: 'Beans',
-                    },
-                    listeners: {
-                        'selection-changed': spy
-                    },
-                })
-            })
-    
-
-            it('emits event when prop changed to corn', () => {
-                const spySelected = cy.spy()
-                let comp = shallowMount(DropdownWithAllComponent, {
-                    propsData: {
-                        dropdownList: ['Corn', 'Beans', 'Peas'],
-                        includesAll: true,
-                        selectedVal: 'Beans',
-                    },
-                    listeners: {
-                        'selection-changed': spySelected
-                    }
-                })
-                expect(comp.vm.selectedOption).to.equal('Beans')
-                cy.wrap(comp.setProps({ selectedVal: 'Corn' })).then(() => {
-                      expect(comp.vm.selectedOption).to.equal('Corn')
-                      expect(spySelected).to.be.calledWith('Corn')
-
-                })
-
-            })
-
-            it('emits event when prop changed to all', () => {
-                const spySelected = cy.spy()
-                let comp = shallowMount(DropdownWithAllComponent, {
-                    propsData: {
-                        dropdownList: ['Corn', 'Beans', 'Peas'],
-                        includesAll: true,
-                        selectedVal: 'Beans',
-                    },
-                    listeners: {
-                        'selection-changed': spySelected
-                    }
-                })
-                expect(comp.vm.selectedOption).to.equal('Beans')
-                cy.wrap(comp.setProps({ selectedVal: 'All' })).then(() => {
-                      expect(comp.vm.selectedOption).to.equal('All')
-                      expect(spySelected).to.be.calledWith('All')
-
-                })
-
-            })
-
-            it('emits event when prop changed to nonlisted option', () => {
-                const spySelected = cy.spy()
-                let comp = shallowMount(DropdownWithAllComponent, {
-                    propsData: {
-                        dropdownList: ['Corn', 'Beans', 'Peas'],
-                        includesAll: true,
-                        selectedVal: 'Beans',
-                    },
-                    listeners: {
-                        'selection-changed': spySelected
-                    }
-                })
-                expect(comp.vm.selectedOption).to.equal('Beans')
-                cy.wrap(comp.setProps({ selectedVal: 'Nope' })).then(() => {
-                      expect(comp.vm.selectedOption).to.equal(null)
-                      expect(spySelected).to.be.calledWith(null)
-
-                })
-
-            })
-
-            it('emits event when prop changed to null', () => {
-                const spySelected = cy.spy()
-                let comp = shallowMount(DropdownWithAllComponent, {
-                    propsData: {
-                        dropdownList: ['Corn', 'Beans', 'Peas'],
-                        includesAll: true,
-                        selectedVal: 'Beans',
-                    },
-                    listeners: {
-                        'selection-changed': spySelected
-                    }
-                })
-                expect(comp.vm.selectedOption).to.equal('Beans')
-                cy.wrap(comp.setProps({ selectedVal: null })).then(() => {
-                      expect(comp.vm.selectedOption).to.equal(null)
-                      expect(spySelected).to.be.calledWith(null)
-
-                })
             })
         })
     })
+})
